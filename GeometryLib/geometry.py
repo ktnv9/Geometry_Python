@@ -169,7 +169,7 @@ class LineSegment:
         vector = self.vector()
         return vector.length()
 
-    def min_point(self):
+    def mid_point(self):
         return (self.point1 + self.point2)/2
     
     def parallel(self, other):
@@ -224,6 +224,40 @@ class LineSegment:
         p1_p_ls_length = LineSegment(self.point1, point).length()
         p_p2_ls_length = LineSegment(point, self.point2).length() 
         return abs(ls_length - (p1_p_ls_length+p_p2_ls_length)) < 0.00001
+
+class Ray:
+    def __init__(self, start_point, direction_vector):
+        self.start_point = start_point
+        self.direction_vector = direction_vector
+
+    def parallel(self, other):
+        return self.direction_vector.parallel(other.direction_vector)
+    
+    def anti_parallel(self, other):
+        return self.direction_vector.anti_parallel(other.direction_vector)
+
+    def orthogonal(self, other):
+        return self.direction_vector.orthogonal(other.direction_vector)
+
+    def aligned(self, other):
+        return self.direction_vector.aligned(other.direction_vector)
+
+    def intersection_point(self, other):
+        pass
+
+    def intersects(self, other):
+        return self.intersection_point(other) is not None
+
+    def cross_product(self, other):
+        return self.direction_vector.cross_product(other.direction_vecotr)
+
+    def angle_between(self, other):
+        return self.direction_vector.angle_between(other.direction_vector)
+
+    def contains_point(self, point):
+        vector_p_sp = point - self.start_point
+        return self.direction_vector.parallel(vector_p_sp)
+        
 
 
 class TestPoint(unittest.TestCase):
