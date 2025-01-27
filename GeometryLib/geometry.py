@@ -52,13 +52,13 @@ class Point:
     
     def distace_to(self, other):
 
-        # euclidean distance between two points.
+        # Euclidean distance between two points.
         return (other-self).length()
     
-    def point_at_distance(self, distace, direction_vector):
+    def point_at_distance(self, distance, direction_vector):
 
         # computes point at a distance from this point along the given direction vector
-        return self + (direction_vector * distace)
+        return self + (direction_vector * distance)
     
     def directional_distance_to(self, other, direction_vector):
 
@@ -189,7 +189,7 @@ class LineSegment:
         # a, b are points of self
         # c, d are points of other
         # intersection occurs when two parametric equations become equal: a + t(b-a) = c + s(d-c)
-        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
+        # solve for t & s by applying the dot product of orthogonal vectors of self & other on both sides.
 
         a, b = self.point1, self.point2
         c, d = other.point1, other.point2
@@ -248,7 +248,7 @@ class Ray:
         # a & b are the start points of self & other.
         # v1, v2 are the respective ray direction vectors.
         # intersection occurs when two parametric equations become equal: a + t(v1) = b + s(v2)
-        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
+        # solve for t & S by applying dot product of orthogonal vectors of self & other on both sides.
 
         a = self.start_point
         v1 = self.direction_vector
