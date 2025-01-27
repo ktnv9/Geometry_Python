@@ -206,6 +206,7 @@ class LineSegment:
         scalar_t = vec_ac.dot_product(orthog_vec_cd)/vec_ab.dot_product(orthog_vec_cd)
 
         if (0 <= scalar_s <= 1) and (0 <= scalar_t <= 1): 
+
             return a + vec_ab * scalar_t
 
         return None
@@ -243,7 +244,27 @@ class Ray:
         return self.direction_vector.aligned(other.direction_vector)
 
     def intersection_point(self, other):
-        pass
+        
+        # a & b are the start points of self & other.
+        # v1, v2 are the respective ray direction vectors.
+        # intersection occurs when two parametric equations become equal: a + t(v1) = b + s(v2)
+        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
+
+        a = self.start_point
+        v1 = self.direction_vector
+        b = other.start_point
+        v2 = other.direction_vector
+
+        orthog_v1 = (v1.cross_product(v2)).cross_product(v1)
+        orthog_v2 = (v1.cross_product(v2)).cross_product(v2)
+
+        scalar_s = (a-b).dot_product(orthog_v1)/v2.dot_product(orthog_v1)
+        scalar_t = (b-a).dot_product(orthog_v2)/v1.dot_product(orthog_v2)
+
+        if scalar_s >= 0 and scalar_t >= 0:
+            return a + v1 * scalar_t
+
+        return None
 
     def intersects(self, other):
         return self.intersection_point(other) is not None
