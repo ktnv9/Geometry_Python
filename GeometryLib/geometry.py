@@ -52,13 +52,13 @@ class Point:
     
     def distace_to(self, other):
 
-        # Euclidean distance between two points.
+        # euclidean distance between two points.
         return (other-self).length()
     
-    def point_at_distance(self, distance, direction_vector):
+    def point_at_distance(self, distace, direction_vector):
 
         # computes point at a distance from this point along the given direction vector
-        return self + (direction_vector * distance)
+        return self + (direction_vector * distace)
     
     def directional_distance_to(self, other, direction_vector):
 
@@ -189,7 +189,7 @@ class LineSegment:
         # a, b are points of self
         # c, d are points of other
         # intersection occurs when two parametric equations become equal: a + t(b-a) = c + s(d-c)
-        # solve for t & s by applying the dot product of orthogonal vectors of self & other on both sides.
+        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
 
         a, b = self.point1, self.point2
         c, d = other.point1, other.point2
@@ -248,7 +248,7 @@ class Ray:
         # a & b are the start points of self & other.
         # v1, v2 are the respective ray direction vectors.
         # intersection occurs when two parametric equations become equal: a + t(v1) = b + s(v2)
-        # solve for t & S by applying dot product of orthogonal vectors of self & other on both sides.
+        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
 
         a = self.start_point
         v1 = self.direction_vector
@@ -279,6 +279,112 @@ class Ray:
         vector_p_sp = point - self.start_point
         return self.direction_vector.parallel(vector_p_sp)
         
+class Rectangle:
+
+    def __init__(self, width, height, width_axis = Vector(1,0,0), height_axis = Vector(0,1,0), origin_point = Vector(0,0,0), origin_tag = "LB"):
+        self.width, self.height = width, height
+        self.width_axis, self.height_axis = width_axis, height_axis
+        self.anchor_tag, self.anchor_point = origin_point, origin_tag
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(self):
+        return 2*(self.width + self.height)
+
+    def contains_point(self, point):
+        pass
+
+    def anchor_point(self, anchor_tag):
+        pass
+
+    def intersects_with(self, other):
+        pass
+
+    def intersecting_area(self, other):
+        pass
+
+class Polygon:
+
+    def __init__(self, points):
+        self.points = points
+
+    def vertex_count(self):
+        return len(self.points)
+
+    def perimeter(self):
+        pass
+
+    def area(self):
+        pass
+
+    def diameter(self):
+        pass
+
+    def centriod(self):
+        pass
+
+    def is_convex(self):
+        
+        num_points = len(self.pionts)
+        for i in range(num_points+1):
+
+            point1, point2 = self.point
+            if i == num_points:
+                pass
+
+    def corner_curvatures(self):
+        # list of curvatures at each point of the polygon.
+        pass
+
+    def corner_angles(self):
+        pass
+
+    def is_regular(self):
+        pass
+        # check if all corner angles are the same.
+
+    def contains_point(self):
+        
+        # implement ray casting algorithm
+        pass
+
+    def intersects_with(self, other):
+        pass
+
+    def intersecting_area(self, other):
+        pass
+
+    def convex_hull(self):
+        pass
+
+    def bounding_box(self):
+        pass
+        # return rectangle obect
+
+    def bounding_circle(self):
+        pass
+        # return circle object
+
+class Circle:
+
+    def __init__(self, center = Vector(0,0,0), radius=1):
+        # default unit circle.
+        self.center = center
+        self.radius = radius
+        
+    def perimeter(self):
+        return 2*math.pi*self.radius
+    
+    def area(self):
+        return math.pi * self.radius**2
+    
+
+
+                
+
+
+
 
 
 class TestPoint(unittest.TestCase):
