@@ -281,7 +281,7 @@ class Ray:
         
 class Rectangle:
 
-    def __init__(self, width, height, width_axis = Vector(1,0,0), height_axis = Vector(0,1,0), origin_point = Vector(0,0,0), origin_tag = "LB"):
+    def __init__(self, width, height, width_axis = Vector(1,0,0), height_axis = Vector(0,1,0), origin_point = Point(0,0,0), origin_tag = "LB"):
         self.width, self.height = width, height
         self.width_axis, self.height_axis = width_axis, height_axis
         self.anchor_tag, self.anchor_point = origin_point, origin_tag
@@ -322,7 +322,10 @@ class Polygon:
         pass
 
     def centriod(self):
-        pass
+        x_coords = [point.x for point in self.points]
+        y_coords = [point.y for point in self.points]
+        z_coords = [point.z for point in self.points]
+        return Point(sum(x_coords)/len(x_coords), sum(y_coords)/len(y_coords), sum(z_coords)/len(z_coords))
 
     def is_convex(self):
         
@@ -359,8 +362,11 @@ class Polygon:
         pass
 
     def bounding_box(self):
-        pass
-        # return rectangle obect
+        x_coords = [point.x for point in self.points]
+        y_coords = [point.y for point in self.points]
+        min_x, max_x = min(x_coords), max(x_coords)
+        min_y, max_y = min(y_coords), max(y_coords)
+        return Rectangle(width=max_x-min_x, height=max_y-min_y, origin_point=Point(min_x, min_y, self.points[0].z))
 
     def bounding_circle(self):
         pass
@@ -368,16 +374,31 @@ class Polygon:
 
 class Circle:
 
-    def __init__(self, center = Vector(0,0,0), radius=1):
+    def __init__(self, center = Point(0,0,0), radius=1):
         # default unit circle.
         self.center = center
         self.radius = radius
         
     def perimeter(self):
+        # 2*pi*r
         return 2*math.pi*self.radius
     
     def area(self):
+
+        # pi*r^2
         return math.pi * self.radius**2
+
+    def intersects_with(self, other):
+
+        # distance between centers < sum of radii
+        return (self.center-other.center).length() < (self.radius + other.radius)
+    
+    def contains_point(self, point):
+
+        # distance between center and point < radius
+        return (point - self.center).length() < self.radius
+
+    
     
 
 
