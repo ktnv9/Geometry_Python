@@ -284,7 +284,7 @@ class Rectangle:
     def __init__(self, width, height, width_axis = Vector(1,0,0), height_axis = Vector(0,1,0), origin_point = Point(0,0,0), origin_tag = "LB"):
         self.width, self.height = width, height
         self.width_axis, self.height_axis = width_axis, height_axis
-        self.anchor_tag, self.anchor_point = origin_point, origin_tag
+        self.orign_point, self.origin_tag = origin_point, origin_tag
 
     def area(self):
         return self.width * self.height
@@ -293,13 +293,41 @@ class Rectangle:
         return 2*(self.width + self.height)
 
     def contains_point(self, point):
-        pass
+
+        # this method works for generic mis-algined rectangles as well.
+        lb_corner = self.anchor_point("LB")
+        rt_corner = self.anchor_point("RT")
+
+        dist_along_width = lb_corner.directional_distance_to(point, self.width_axis)
+        dist_along_height = rt_corner.directional_distance_to(point, self.height_axis)
+
+        return (dist_along_width < self.width) and (dist_along_height < self.height)
 
     def anchor_point(self, anchor_tag):
+        # possible anchor points = Left-Bottom, Right-Bottom, Left-Top, Right-Top, Center, Left-Center, Right-Center, Top-Center, Bottom-Center
+        
+        # move from origin tag to center; then move from center to desired anchor tag
+        steps_to_ctr = self._get_steps(self.origin_tag, "CTR")
+        steps_from_ctr = self._get_steps("CTR", anchor_tag)
+        steps = steps_to_ctr + steps_from_ctr
+        for step in steps:
+            distance = steps[0]
+            direction = steps[1]
+            dest_pt = dest_pt.point_at_distance(distance, direction)
+        return dest_pt
+
+    def _get_steps_to_and_fro_from_ctr(self, source_or_dist):
+        
+        # create a dictionary: key  = source_or_dist; value = [(distance1, direction1), (distance2, direction2)]
         pass
 
     def intersects_with(self, other):
-        pass
+        
+        if self.width_axis.aligned(other.width_axis) and self.height_axis.aligned(other.height_axis):
+            pass
+        else:
+            # apply Separating-axis-theorem
+            pass
 
     def intersecting_area(self, other):
         pass
