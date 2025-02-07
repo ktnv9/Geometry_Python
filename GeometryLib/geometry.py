@@ -64,6 +64,11 @@ class Point:
 
         # computes the directional distance between two points.
         return (other-self).dot_product(direction_vector)
+    
+    def polar_angle(self, other):
+        return math.atan2(other.x-self.x, other.y-self.y)
+    
+
 
 class Vector:
     
@@ -156,6 +161,20 @@ class Vector:
 
         # computes the angle between two vectors
         return math.degrees(math.acos(self.dot_product(other)/(self.length()*other.length())))
+
+    def relative_position(self, other, orthog_plane_normal):
+        cross_prod_vector = self.cross_product(other)
+        
+        rel_position = "RIGHT"
+        if orthog_plane_normal.parallel(cross_prod_vector):
+            rel_position = "LEFT"
+            
+        return rel_position
+    
+    def parallelogram_area(self, other):
+        cross_prod_vector = self.cross_product(other)
+        return cross_prod_vector.length()
+
 
 class LineSegment:
 
