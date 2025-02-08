@@ -4,7 +4,7 @@ import unittest
 
 class Point:
 
-    def __init__(self, x, y, z):
+    def __init__(self, x, y, z=0):
 
         # initialization
         self.x, self.y, self.z = x, y, z
@@ -21,8 +21,14 @@ class Point:
 
     def __mul__(self, number):
 
-        # p1*2 (mulitply with any number; order is important)
+        # p1*2 (mulitply with any number)
         return Point(self.x * number, self.y * number, self.z * number)
+    
+    def __rmul__(self, number):
+
+        # reverse multiplication (Use case: we don't have to worry about the multiplication order)
+        # 2*p1 (mulitply with any number)
+        return self.__mul__(number)
     
     def __truediv__(self, number):
 
@@ -32,7 +38,7 @@ class Point:
         if number == 0:
             raise ZeroDivisionError("Can not divide by zero")
         
-        # p1*2 (divide with any number; order is important)
+        # p1*2 (divide with any number; order is important -> Eg: point_object * number (not number * point_object))
         return Point(self.x/number, self.y/number, self.z/number)
     
     def __neg__(self):
@@ -43,14 +49,16 @@ class Point:
     def __eq__(self, other):
 
         # p1 == p2
-        return (abs(self.x-other.x) < 0.01) and (abs(self.y-other.y) < 0.01) and (abs(self.z-other.z) < 0.01)
+        return (math.isclose(self.x, self.y, abs_tol=1e-5) and 
+                math.isclose(self.y, self.y, abs_tol=1e-5) and 
+                math.isclose(self.z, self.z, abs_tol=1e-5))
     
     def __repr__(self):
 
-        # (x, y, z)
-        return f"({self.x}, {self.y}, {self.z})"
+        # representation string = (x, y, z)
+        return f"({self.x}, {self.y})" if self.z == 0 else f"({self.x}, {self.y}, {self.z})"
     
-    def distace_to(self, other):
+    def distance_to(self, other):
 
         # euclidean distance between two points.
         return (other-self).length()
@@ -66,9 +74,8 @@ class Point:
         return (other-self).dot_product(direction_vector)
     
     def polar_angle(self, other):
-        return math.atan2(other.x-self.x, other.y-self.y)
+        return math.atan2(other.y-self.y, other.x-self.x)
     
-
 
 class Vector:
     
