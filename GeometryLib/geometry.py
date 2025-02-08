@@ -6,7 +6,7 @@ class Point:
 
     def __init__(self, x, y, z=0):
 
-        # initialization
+        # initialization | default z = 0 makes this class work for both 3D and 2D.
         self.x, self.y, self.z = x, y, z
 
     def __add__(self, other):
@@ -32,13 +32,15 @@ class Point:
     
     def __truediv__(self, number):
 
+        # raise error if number is not int or float.
         if not isinstance(number, (int, float)):
             raise TypeError("number must be numeric")
 
+        # raise error if number is zero.
         if number == 0:
             raise ZeroDivisionError("Can not divide by zero")
         
-        # p1*2 (divide with any number; order is important -> Eg: point_object * number (not number * point_object))
+        # p1/2 (divide with any number)
         return Point(self.x/number, self.y/number, self.z/number)
     
     def __neg__(self):
@@ -79,8 +81,9 @@ class Point:
 
 class Vector:
     
-    def __init__(self, x, y, z):
-        # initialization
+    def __init__(self, x, y, z = 0):
+
+        # initialization | default z = 0 makes this class work for both 3D and 2D.
         self.x, self.y, self.z = x, y, z
     
     def __add__(self,other):
@@ -95,12 +98,26 @@ class Vector:
     
     def __mul__(self, number):
 
-        # v*2 (multiply with any number; order is important)
+        # v*2 (multiply with any number)
         return Vector(self.x*number, self.y*number, self.z*number)
+    
+    def __rmul__(self, number):
+
+        # reverse multiplication (Use case: we don't have to worry about the multiplication order)
+        # 2*v (mulitply with any number)
+        return self.__mul__(number)
     
     def __truediv__(self, number):
 
-        # v/2 (divide with any number; order is important)
+        # raise error if number is not int or float
+        if not isinstance(number, (int, float)):
+            raise TypeError("number must be numeric")
+        
+        # raise error if number is zero.
+        if number == 0:
+            raise ZeroDivisionError("Can not divide by 0")
+
+        # v/2 (divide with any number)
         return Vector(self.x/number, self.y/number, self.z/number)
     
     def __neg__(self):
@@ -111,12 +128,14 @@ class Vector:
     def __eq__(self, other):
 
         # v1 == v2
-        return (abs(self.x-other.x) < 0.0001) and (abs(self.y-other.y) < 0.0001) and (abs(self.z-other.z) < 0.0001)
+        return (math.isclose(self.x, other.x, abs_tol=1e-5) and 
+                math.isclose(self.y, other.y, abs_tol=1e-5) and 
+                math.isclose(self.z, other.z, abs_tol=1e-5)) 
 
     def __repr__(self):
 
         # (x, y, z)
-        return f"({self.x}, {self.y}, {self.z})"
+        return f"({self.x}, {self.y})" if self.z == 0 else f"({self.x}, {self.y}, {self.z})"
     
     def length(self):
 
@@ -127,12 +146,15 @@ class Vector:
 
         # unitize/normalize the vector
         vec_length = self.length()
+        if math.isclose(vec_length, 0, abs_tol=1e-9):
+            raise ValueError("Can not normalize zero vector")
+        
         return self/vec_length 
 
     def is_unit_vector(self):
 
         # checks if the vector is a unit vector
-        return abs(self.length() - 1) < 0.0001
+        return math.isclose(self.length(), 1, abs_tol=1e-5)
     
     def dot_product(self, other):
 
@@ -147,34 +169,68 @@ class Vector:
     def parallel(self, other):
 
         # checks if two vectors are parallel
+
+        # return false if any of the vectors is a zero vector
+        if self.length() == 0 or other.length() == 0:
+            return False
+        
         return self.angle_between(other) < 1 #1 deg tol
     
     def anti_parallel(self, other):
 
         # checks if two vectors are anti-parallel
+
+        # return false if any of the vectors is a zero vector
+        if self.length() == 0 or other.length() == 0:
+            return False
+        
         return abs(self.angle_between(other) - 180) < 1  # 1 deg tol
 
     def aligned(self, other):
 
         # checks if two vectors are aligned (parallel or anti-parallel)
-        return self.parallel() or self.anti_parallel()
+        return self.parallel(other) or self.anti_parallel(other)
     
     def orthogonal(self, other):
 
         # checks if two vectors are perpendicular
+
+        # return false if any of the vectors is a zero vector
+        if self.length() == 0 or other.length() == 0:
+            return False
+        
         return abs(self.angle_between(other) - 90) < 1 # 1 deg tol
 
     def angle_between(self, other):
 
-        # computes the angle between two vectors
-        return math.degrees(math.acos(self.dot_product(other)/(self.length()*other.length())))
+        # computes the angle between two vectors using dot product formula.
+        len_self, len_other = self.length(), other.length()
+
+        # raise error if one of the vectors is a zero vector.
+        if len_self == 0 or len_other == 0:
+            raise ValueError("Can not find anngle with zero vector(s)")
+
+        # compute cos theta usig dot product formula
+        cos_theta = self.dot_product(other)/(len_self * len_other)
+
+        # address minute floating point precision issues (-1 <= cos_theta <= 1)
+        cos_theta = min(1, cos_theta) # when cos_theta > 1, set it to 1
+        cos_theta = max(-1, cos_theta) # when cos_theta < -1, set it to -1
+        return math.degrees(math.acos(cos_theta))
 
     def relative_position(self, other, orthog_plane_normal):
+        
+        # relative position of one vector wrt another vector (left or right)
+
+        # compute cross product vector
         cross_prod_vector = self.cross_product(other)
         
-        rel_position = "RIGHT"
-        if orthog_plane_normal.parallel(cross_prod_vector):
-            rel_position = "LEFT"
+        # default relative position = left.
+        rel_position = "LEFT"
+
+        # if cross product vector is anti-parallel to the orthogoanl vector, then the relative postion = right.
+        if orthog_plane_normal.anti_parallel(cross_prod_vector):
+            rel_position = "RIGHT"
             
         return rel_position
     
