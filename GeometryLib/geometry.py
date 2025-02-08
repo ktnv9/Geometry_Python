@@ -235,6 +235,8 @@ class Vector:
         return rel_position
     
     def parallelogram_area(self, other):
+
+        # area of the parallelogram formed by two vectos = length of the cross product vector.
         cross_prod_vector = self.cross_product(other)
         return cross_prod_vector.length()
 
