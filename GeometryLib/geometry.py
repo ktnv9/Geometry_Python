@@ -240,33 +240,45 @@ class Vector:
         cross_prod_vector = self.cross_product(other)
         return cross_prod_vector.length()
 
-
 class LineSegment:
 
     def __init__(self, point1, point2):
+
+        # two points of line segment
         self.point1, self.point2 = point1, point2
 
-    def vector(self):
-        return self.point2 - self.point1
+        # line segment vector
+        self.vector = self.point2 - self.point1
 
     def length(self):
-        vector = self.vector()
-        return vector.length()
+
+        # length of the line segment
+        return self.vector.length()
 
     def mid_point(self):
+
+        # midpiont of the line segment
         return (self.point1 + self.point2)/2
     
     def parallel(self, other):
-        return self.vector().parallel(other.vector())
+
+        # check if two line segemnts are parallel.
+        return self.vector.parallel(other.vector)
 
     def anti_parallel(self, other):
-        return self.vector().anti_parallel(other.vector())
+
+        # check if two line segemnts are anti-parallel.
+        return self.vector.anti_parallel(other.vector)
 
     def aligned(self,other):
-        return self.vector().aligned(other.vector())
+
+        # check if two line segemnts are aligned (parallel or anti-parallel).
+        return self.vector.aligned(other.vector)
 
     def orthogonal(self, other):
-        return self.vector().orthogonal(other.vector())
+
+        # check if two line segments are orthogonal.
+        return self.vector.orthogonal(other.vector)
 
     def intersection_point(self, other):
         
@@ -278,8 +290,8 @@ class LineSegment:
         a, b = self.point1, self.point2
         c, d = other.point1, other.point2
 
-        vec_ab = self.vector()
-        vec_cd = other.vector()
+        vec_ab = self.vector
+        vec_cd = other.vector
         vec_ca = a - c
         vec_ac = -vec_ca
         
@@ -296,19 +308,33 @@ class LineSegment:
         return None
 
     def intersects(self, other):
+
+        # check if the two line segments intersect with each other.
         return self.intersection_point(other) is not None
 
     def cross_product(self, other):
-        return self.vector().cross_product(other.vector())
+
+        # cross product of two line segments (gives the vector perpendicular to both the line segments)
+        return self.vector.cross_product(other.vector)
 
     def angle_between(self, other):
-        return self.vector().angle_between(other.vector())
+
+        # find the angle between two line segments.
+        return self.vector.angle_between(other.vector)
 
     def contains_point(self, point):
+
+        # check if point is on the line segment.
+
+        # total line segment length
         ls_length = self.length()
+
+        # length of line segements (p1->p, p->p2)
         p1_p_ls_length = LineSegment(self.point1, point).length()
-        p_p2_ls_length = LineSegment(point, self.point2).length() 
-        return abs(ls_length - (p1_p_ls_length+p_p2_ls_length)) < 0.00001
+        p_p2_ls_length = LineSegment(point, self.point2).length()
+
+        # triangle inequality based check (total line segment length must be equal to lengths of the two line segments)
+        return math.isclose(ls_length, (p1_p_ls_length+p_p2_ls_length), abs_tol=1e-5)
 
 class Ray:
     def __init__(self, start_point, direction_vector):
