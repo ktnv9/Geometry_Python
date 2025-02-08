@@ -282,10 +282,12 @@ class LineSegment:
 
     def intersection_point(self, other):
         
-        # a, b are points of self
-        # c, d are points of other
-        # intersection occurs when two parametric equations become equal: a + t(b-a) = c + s(d-c)
-        # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
+        # intersection point between two line segemnts by equating & solving parametric equations.
+
+            # a, b are points of self
+            # c, d are points of other
+            # intersection occurs when two parametric equations become equal: a + t(b-a) = c + s(d-c)
+            # solve for t & S by apply dot product of orthogonal vectors of self & other on both sides.
 
         a, b = self.point1, self.point2
         c, d = other.point1, other.point2
