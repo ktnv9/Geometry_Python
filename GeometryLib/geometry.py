@@ -294,6 +294,11 @@ class LineSegment:
 
         vec_ab = self.vector
         vec_cd = other.vector
+
+        # aligned line segments do not intersect.
+        if vec_ab.aligned(vec_cd):
+            return None
+
         vec_ca = a - c
         vec_ac = -vec_ca
         
@@ -341,22 +346,32 @@ class LineSegment:
 class Ray:
     def __init__(self, start_point, direction_vector):
         self.start_point = start_point
-        self.direction_vector = direction_vector
+        self.direction_vector = direction_vector.normalize()
 
     def parallel(self, other):
+        
+        # check if two rays are parallel.
         return self.direction_vector.parallel(other.direction_vector)
     
     def anti_parallel(self, other):
+
+        # check if two rays are anti-parallel.
         return self.direction_vector.anti_parallel(other.direction_vector)
 
-    def orthogonal(self, other):
-        return self.direction_vector.orthogonal(other.direction_vector)
-
     def aligned(self, other):
+
+        # check if two rays are aligned (parallel or anti-parallel).
         return self.direction_vector.aligned(other.direction_vector)
+    
+    def orthogonal(self, other):
+
+        # check if two rays are orthogonal.
+        return self.direction_vector.orthogonal(other.direction_vector)
 
     def intersection_point(self, other):
         
+        # intersection point between two rays by equating & solving parametric equations.
+
         # a & b are the start points of self & other.
         # v1, v2 are the respective ray direction vectors.
         # intersection occurs when two parametric equations become equal: a + t(v1) = b + s(v2)
@@ -366,6 +381,10 @@ class Ray:
         v1 = self.direction_vector
         b = other.start_point
         v2 = other.direction_vector
+
+        # aligned rays do not intersect.
+        if v1.aligned(v2):
+            return None 
 
         orthog_v1 = (v1.cross_product(v2)).cross_product(v1)
         orthog_v2 = (v1.cross_product(v2)).cross_product(v2)
@@ -379,15 +398,23 @@ class Ray:
         return None
 
     def intersects(self, other):
+
+        # check if two rays intersect
         return self.intersection_point(other) is not None
 
     def cross_product(self, other):
-        return self.direction_vector.cross_product(other.direction_vecotr)
+
+        # compute a vector that is orthogonal to both the rays.
+        return self.direction_vector.cross_product(other.direction_vector)
 
     def angle_between(self, other):
+
+        # compute the angle between two rays.
         return self.direction_vector.angle_between(other.direction_vector)
 
     def contains_point(self, point):
+
+        # checks if the given point lies on the ray.
         vector_p_sp = point - self.start_point
         return self.direction_vector.parallel(vector_p_sp)
         
