@@ -9,25 +9,19 @@ class Graph:
 
 	def _construct_graph(self):
 		
-		# dictionary to store the adjacency list
-		graph = {}
+		# adjacency list to store graph for effient neighbour look ups.
+		
+		graph = {node:[] for node in self._nodes}
 
-		if not self._nodes == []:
-
-			# insert nodes.
-			for node in self._nodes:
-				graph[node] = []
-
-			# insert edges
-			for edge in self._edges:
-				node, adj_node = edge[0], edge[1]
-				graph[node].append(adj_node)
+		# insert edges
+		for (node, adj_node) in self._edges:
+			graph[node].append(adj_node)
 	
 		return graph
 	
 	def adjacent_nodes(self, node):
+
 		# return the adjacent nodes of a given node.
-		
 		if node in self._graph:
 			return self._graph[node]
 		
@@ -109,10 +103,26 @@ class Graph:
 		# return the nodes that are connected (visited list)
 		return visited
 
+# Test case 1: Simple connected graph
 nodes = [1, 2, 3, 4]
-edges = [(1,2),(2,1),(2,3),(3,2),(1,3),(3,1)]
-edges = []
-
+edges = [(1, 2), (2, 1), (2, 3), (3, 2), (1, 3), (3, 1)]
 graph = Graph(nodes, edges)
-conn_comps = graph.get_connected_components()
-print(conn_comps)
+print(graph.get_connected_components())  # Expected: [{1, 2, 3}, {4}]
+
+# Test case 2: Empty graph
+nodes = []
+edges = []
+graph = Graph(nodes, edges)
+print(graph.get_connected_components())  # Expected: []
+
+# Test case 3: Disconnected graph
+nodes = [1, 2, 3, 4]
+edges = [(1, 2), (2, 1)]
+graph = Graph(nodes, edges)
+print(graph.get_connected_components())  # Expected: [{1, 2}, {3}, {4}]
+
+# Test case 4: Graph with a single node
+nodes = [1]
+edges = []
+graph = Graph(nodes, edges)
+print(graph.get_connected_components())  # Expected: [{1}]
